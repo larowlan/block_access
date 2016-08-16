@@ -133,12 +133,13 @@ class BlockAccessTest extends KernelTestBase {
       'info' => 'block2',
       'revision_user' => $this->user2->id(),
     ]);
+    $this->blockContent2->save();
     $this->blockContent3 = BlockContent::create([
       'type' => 'type2',
       'info' => 'block3',
       'revision_user' => $this->user1->id(),
     ]);
-    $this->blockContent2->save();
+    $this->blockContent3->save();
   }
 
   /**

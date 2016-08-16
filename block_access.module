@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file
+ * Main module functionality.
+ */
+
+use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Session\AccountInterface;
+
+/**
+ * Implements hook_entity_access().
+ */
+function block_access_entity_access(EntityInterface $entity, $operation, AccountInterface $account) {
+  if ($entity->getEntityTypeId() !== 'block_content') {
+    return AccessResult::neutral();
+  }
+  /** @var \Drupal\block_content\BlockContentInterface $entity */
+  $any = sprintf('%s own %s block_content', $operation, $entity->bundle());
+  $own = sprintf('%s own %s block_content', $operation, $entity->bundle());
+  return AccessResult::allowedIfHasPermission($account, $any)
+    ->orIf(
+      AccessResult::allowedIfHasPermission($account, $own)
+      ->andIf(AccessResult::allowedIf($entity->getRevisionUser() === $account))
+      ->addCacheableDependency($entity)
+    );
+}
+
+/**
+ * Implements hook_entity_create_access().
+ */
+function block_access_entity_create_access(AccountInterface $account, array $context, $entity_bundle) {
+  if ($context['entity_type_id'] !== 'block_content') {
+    return AccessResult::neutral();
+  }
+  return AccessResult::allowedIfHasPermission($account, sprintf('create %s block_content', $entity_bundle));
+}
