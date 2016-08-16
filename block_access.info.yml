@@ -1,0 +1,7 @@
+name: 'Block access'
+description: 'Adds additional permissions for managing block content.'
+type: module
+core: '8.x'
+dependencies:
+  - block_content
+  - block
