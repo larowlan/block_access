@@ -45,6 +45,13 @@ class BlockAccessTest extends KernelTestBase {
   protected $blockContent2;
 
   /**
+   * Test block content.
+   *
+   * @var \Drupal\block_content\BlockContentInterface
+   */
+  protected $blockContent3;
+
+  /**
    * Test user.
    *
    * @var \Drupal\user\UserInterface
@@ -57,6 +64,13 @@ class BlockAccessTest extends KernelTestBase {
    * @var \Drupal\user\UserInterface
    */
   protected $user2;
+
+  /**
+   * Test user.
+   *
+   * @var \Drupal\user\UserInterface
+   */
+  protected $user3;
 
   /**
    * {@inheritdoc}
@@ -106,6 +120,8 @@ class BlockAccessTest extends KernelTestBase {
       'delete own type1 block_content',
     ]);
 
+    $this->user3 = $this->createUser();
+
     $this->blockContent1 = BlockContent::create([
       'type' => 'type1',
       'info' => 'block1',
@@ -114,7 +130,12 @@ class BlockAccessTest extends KernelTestBase {
     $this->blockContent1->save();
     $this->blockContent2 = BlockContent::create([
       'type' => 'type2',
-      'info' => 'block1',
+      'info' => 'block2',
+      'revision_user' => $this->user2->id(),
+    ]);
+    $this->blockContent3 = BlockContent::create([
+      'type' => 'type2',
+      'info' => 'block3',
       'revision_user' => $this->user1->id(),
     ]);
     $this->blockContent2->save();
@@ -124,7 +145,50 @@ class BlockAccessTest extends KernelTestBase {
    * Tests block access.
    */
   public function testAccess() {
-    $this->fail();
+    // User has edit-any permission.
+    $this->assertTrue($this->blockContent1->access('edit', $this->user1));
+    // User has edit-own permission.
+    $this->assertTrue($this->blockContent1->access('edit', $this->user2));
+    // User has no permission.
+    $this->assertFalse($this->blockContent1->access('edit', $this->user3));
+
+    // User has delete-any permission.
+    $this->assertTrue($this->blockContent1->access('delete', $this->user1));
+    // User has delete-own permission.
+    $this->assertTrue($this->blockContent1->access('delete', $this->user2));
+    // User has no permission.
+    $this->assertFalse($this->blockContent1->access('delete', $this->user3));
+
+    // User has no permission.
+    $this->assertFalse($this->blockContent2->access('edit', $this->user1));
+    // User has edit-any permission.
+    $this->assertTrue($this->blockContent2->access('edit', $this->user2));
+    // User has no permission.
+    $this->assertFalse($this->blockContent2->access('edit', $this->user3));
+
+    // User has no permission.
+    $this->assertFalse($this->blockContent2->access('delete', $this->user1));
+    // User has delete-any permission.
+    $this->assertTrue($this->blockContent2->access('delete', $this->user2));
+    // User has no permission.
+    $this->assertFalse($this->blockContent2->access('delete', $this->user3));
+
+    // User has edit-own permission.
+    $this->assertTrue($this->blockContent3->access('edit', $this->user1));
+    // User has edit-any permission.
+    $this->assertTrue($this->blockContent3->access('edit', $this->user2));
+    // User has no permission.
+    $this->assertFalse($this->blockContent3->access('edit', $this->user3));
+
+    /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
+    $entity_type_manager = $this->container->get('entity_type.manager');
+    $handler = $entity_type_manager->getAccessControlHandler('block_content');
+
+    // User has create access.
+    $this->assertTrue($handler->createAccess('type1', $this->user1));
+    $this->assertTrue($handler->createAccess('type2', $this->user2));
+    $this->assertFalse($handler->createAccess('type1', $this->user2));
+    $this->assertFalse($handler->createAccess('type2', $this->user1));
   }
 
 }
