@@ -17,12 +17,12 @@ function block_access_entity_access(EntityInterface $entity, $operation, Account
     return AccessResult::neutral();
   }
   /** @var \Drupal\block_content\BlockContentInterface $entity */
-  $any = sprintf('%s own %s block_content', $operation, $entity->bundle());
+  $any = sprintf('%s any %s block_content', $operation, $entity->bundle());
   $own = sprintf('%s own %s block_content', $operation, $entity->bundle());
   return AccessResult::allowedIfHasPermission($account, $any)
     ->orIf(
       AccessResult::allowedIfHasPermission($account, $own)
-      ->andIf(AccessResult::allowedIf($entity->getRevisionUser() === $account))
+      ->andIf(AccessResult::allowedIf($entity->getRevisionUser()->id() === $account->id()))
       ->addCacheableDependency($entity)
     );
 }

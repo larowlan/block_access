@@ -46,10 +46,10 @@ class Permissions {
       "create $type_id block_content" => [
         'title' => $this->t('%type_name: Create new block content', $type_params),
       ],
-      "edit own $type_id block_content" => [
+      "update own $type_id block_content" => [
         'title' => $this->t('%type_name: Edit own block content', $type_params),
       ],
-      "edit any $type_id block_content" => [
+      "update any $type_id block_content" => [
         'title' => $this->t('%type_name: Edit any block content', $type_params),
       ],
       "delete own $type_id block_content" => [

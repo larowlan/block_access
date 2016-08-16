@@ -104,19 +104,22 @@ class BlockAccessTest extends KernelTestBase {
     ]);
     $this->blockType2->save();
 
+    // First user is user 1, has all permissions.
+    $this->createUser();
+
     $this->user1 = $this->createUser([
-      'edit any type1 block_content',
+      'update any type1 block_content',
       'delete any type1 block_content',
       'create type1 block_content',
-      'edit own type2 block_content',
+      'update own type2 block_content',
       'delete own type2 block_content',
     ]);
 
     $this->user2 = $this->createUser([
-      'edit any type2 block_content',
+      'update any type2 block_content',
       'delete any type2 block_content',
       'create type2 block_content',
-      'edit own type1 block_content',
+      'update own type1 block_content',
       'delete own type1 block_content',
     ]);
 
@@ -147,11 +150,11 @@ class BlockAccessTest extends KernelTestBase {
    */
   public function testAccess() {
     // User has edit-any permission.
-    $this->assertTrue($this->blockContent1->access('edit', $this->user1));
+    $this->assertTrue($this->blockContent1->access('update', $this->user1));
     // User has edit-own permission.
-    $this->assertTrue($this->blockContent1->access('edit', $this->user2));
+    $this->assertTrue($this->blockContent1->access('update', $this->user2));
     // User has no permission.
-    $this->assertFalse($this->blockContent1->access('edit', $this->user3));
+    $this->assertFalse($this->blockContent1->access('update', $this->user3));
 
     // User has delete-any permission.
     $this->assertTrue($this->blockContent1->access('delete', $this->user1));
@@ -161,11 +164,11 @@ class BlockAccessTest extends KernelTestBase {
     $this->assertFalse($this->blockContent1->access('delete', $this->user3));
 
     // User has no permission.
-    $this->assertFalse($this->blockContent2->access('edit', $this->user1));
+    $this->assertFalse($this->blockContent2->access('update', $this->user1));
     // User has edit-any permission.
-    $this->assertTrue($this->blockContent2->access('edit', $this->user2));
+    $this->assertTrue($this->blockContent2->access('update', $this->user2));
     // User has no permission.
-    $this->assertFalse($this->blockContent2->access('edit', $this->user3));
+    $this->assertFalse($this->blockContent2->access('update', $this->user3));
 
     // User has no permission.
     $this->assertFalse($this->blockContent2->access('delete', $this->user1));
@@ -175,11 +178,11 @@ class BlockAccessTest extends KernelTestBase {
     $this->assertFalse($this->blockContent2->access('delete', $this->user3));
 
     // User has edit-own permission.
-    $this->assertTrue($this->blockContent3->access('edit', $this->user1));
+    $this->assertTrue($this->blockContent3->access('update', $this->user1));
     // User has edit-any permission.
-    $this->assertTrue($this->blockContent3->access('edit', $this->user2));
+    $this->assertTrue($this->blockContent3->access('update', $this->user2));
     // User has no permission.
-    $this->assertFalse($this->blockContent3->access('edit', $this->user3));
+    $this->assertFalse($this->blockContent3->access('update', $this->user3));
 
     /** @var \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager */
     $entity_type_manager = $this->container->get('entity_type.manager');
