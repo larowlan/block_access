@@ -8,6 +8,7 @@
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
 
 /**
  * Implements hook_entity_access().
@@ -22,7 +23,7 @@ function block_access_entity_access(EntityInterface $entity, $operation, Account
   return AccessResult::allowedIfHasPermission($account, $any)
     ->orIf(
       AccessResult::allowedIfHasPermission($account, $own)
-      ->andIf(AccessResult::allowedIf($entity->getRevisionUser()->id() === $account->id()))
+      ->andIf(AccessResult::allowedIf($entity instanceof RevisionLogInterface && $entity->getRevisionUser()->id() === $account->id()))
       ->addCacheableDependency($entity)
     );
 }
