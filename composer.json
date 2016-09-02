@@ -1,0 +1,6 @@
+{
+  "name": "drupal/block_access",
+  "description": "Basic D8 version of block_access.",
+  "type": "drupal-module",
+  "license": "GPL-2.0+"
+}
