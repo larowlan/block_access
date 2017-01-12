@@ -23,7 +23,7 @@ function block_access_entity_access(EntityInterface $entity, $operation, Account
   return AccessResult::allowedIfHasPermission($account, $any)
     ->orIf(
       AccessResult::allowedIfHasPermission($account, $own)
-      ->andIf(AccessResult::allowedIf($entity instanceof RevisionLogInterface && $entity->getRevisionUser()->id() === $account->id()))
+      ->andIf(AccessResult::allowedIf($entity instanceof RevisionLogInterface && $entity->getRevisionUser() && $entity->getRevisionUser()->id() === $account->id()))
       ->addCacheableDependency($entity)
     );
 }
