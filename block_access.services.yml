@@ -1,0 +1,9 @@
+services:
+  block_access.route_subscriber:
+    class: Drupal\block_access\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+  block_access.access_check:
+    class: Drupal\block_access\Access\CreateBlockContentTypeCheck
+    tags:
+      - { name: access_check, applies_to: _block_content_access_create }
